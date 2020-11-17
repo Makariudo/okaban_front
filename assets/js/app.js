@@ -1,14 +1,35 @@
 
 // on objet qui contient des fonctions
-var app = {
+const app = {
 
   // fonction d'initialisation, lancée au chargement de la page
-  init: function () {
+  init() {
     console.log('app.init !');
+
+    // Je suis dans l'objet app. this fait donc référence à cet objet.
+    // /!\ si j'avais fait une fonction flêchée this. aurait fait référence au contexte parent : window
+    this.affectEvent();
+  },
+
+  affectEvent() {
+    document.getElementById('addListButton').addEventListener('click', app.showAddListModal);
+  },
+
+  showAddListModal() {
+    const modalNode = document.getElementById('addListModal');
+    modalNode.classList.add('is-active');
   }
 
 };
 
 
 // on accroche un écouteur d'évènement sur le document : quand le chargement est terminé, on lance app.init
-document.addEventListener('DOMContentLoaded', app.init );
+// En JS lorsque l'on utilise une fonction comme callback son this peut être modifié.
+// Ici ma méthode app.init sera appelé par la fonction addEventListener
+// son this (à app.init) sera donc définit par la fonction addEventListener
+// cette fonction donne au callback qu'elle appelle un this dépendant de l'évenement.
+// Si je veux bloquer la redéfinition de this je dois appeler app.init depuis une fonction
+// fléché
+document.addEventListener('DOMContentLoaded', _ => {
+  app.init();
+});
