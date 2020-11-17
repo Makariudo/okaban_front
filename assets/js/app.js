@@ -56,7 +56,18 @@ const app = {
   },
 
   makeListInDOM(listName) {
+    // Pour utiliser les templates voici quelques étapes
+    // 1. Je récupère mon noeud de template
+    const template = document.getElementById('list-template');
 
+    // 2. Je duplique mon noeud de template
+    const newListNode = document.importNode(template.content, true);
+
+    // 3. Je modifie le duplicata pour intégrer les données
+    newListNode.querySelector('h2').textContent = listName;
+
+    // 4. J'insère le duplicata dans le DOM
+    document.querySelector('.card-lists').appendChild(newListNode);
   }
 
 };
