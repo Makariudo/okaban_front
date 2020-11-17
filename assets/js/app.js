@@ -13,11 +13,24 @@ const app = {
 
   affectEvent() {
     document.getElementById('addListButton').addEventListener('click', app.showAddListModal);
+
+    const closeButtons = document.querySelectorAll('.close');
+    for (let button of closeButtons) {
+      button.addEventListener('click', app.closeAddModal);
+    }
   },
 
   showAddListModal() {
     const modalNode = document.getElementById('addListModal');
     modalNode.classList.add('is-active');
+  },
+
+  closeAddModal() {
+    const modalWindows = document.querySelectorAll('.modal');
+
+    for (let modal of modalWindows) {
+      modal.classList.remove('is-active');
+    }
   }
 
 };
