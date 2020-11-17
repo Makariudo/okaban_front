@@ -20,6 +20,14 @@ const app = {
     }
 
     document.querySelector('#addListModal form').addEventListener('submit', app.submitListCreation);
+
+    const addCardButtons = document.querySelectorAll('.add-card-button');
+    for (let button of addCardButtons) {
+      button.addEventListener('click', app.showAddCardModal);
+    }
+
+    document.querySelector('#addCardModal form').addEventListener('submit', app.submitCardCreation);
+
   },
 
   showAddListModal() {
@@ -33,6 +41,23 @@ const app = {
     for (let modal of modalWindows) {
       modal.classList.remove('is-active');
     }
+  },
+
+  showAddCardModal(event) {
+    const modalNode = document.getElementById('addCardModal');
+    modalNode.classList.add('is-active');
+
+    // En plus d'afficher la modale je dois mettre à jour le list_id
+    // pour savoir dans qu'elle liste je veux rajouter ma carte
+    const addButton = event.target;
+    // ici event.target correspond à mon boutton mais je cherche
+    // une balise parente qui a l'attribut list-id
+    // les querySelector servent à descendre la méthode closest elle sert à remonter
+    const listNode = addButton.closest('div[list-id]');
+
+    // Je peux donc récupérer la valeur et la mettre dans le input hidden
+    const listId = listNode.getAttribute('list-id');
+    modalNode.querySelector('input[type="hidden"]').value = listId;
   },
 
   submitListCreation(event) {
@@ -55,6 +80,19 @@ const app = {
     app.closeAllModal();
   },
 
+  submitCardCreation(event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+
+    const cardName = formData.get('name');
+    const listId = formData.get('list_id');
+
+    app.makeCardInDOM(cardName, listId);
+
+    app.closeAllModal();
+  },
+
   makeListInDOM(listName) {
     // Pour utiliser les templates voici quelques étapes
     // 1. Je récupère mon noeud de template
@@ -65,9 +103,23 @@ const app = {
 
     // 3. Je modifie le duplicata pour intégrer les données
     newListNode.querySelector('h2').textContent = listName;
+    newListNode.querySelector('.add-card-button').addEventListener('click', app.showAddCardModal);
 
     // 4. J'insère le duplicata dans le DOM
     document.querySelector('.card-lists').appendChild(newListNode);
+  },
+
+  makeCardInDOM(cardName, listId) {
+    const template = document.getElementById('card-template');
+
+    // 2. Je duplique mon noeud de template
+    const newCardNode = document.importNode(template.content, true);
+
+    // 3. Je modifie le duplicata pour intégrer les données
+    newCardNode.querySelector('.card-content').textContent = cardName;
+
+    // 4. J'insère le duplicata dans le DOM
+    document.querySelector(`div[list-id="${listId}"] .panel-block`).appendChild(newCardNode);
   }
 
 };
