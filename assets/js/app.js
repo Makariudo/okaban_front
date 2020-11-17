@@ -2,6 +2,8 @@
 // on objet qui contient des fonctions
 const app = {
 
+  BASE_URL: 'http://localhost:3000',
+
   // fonction d'initialisation, lancée au chargement de la page
   init() {
     console.log('app.init !');
@@ -9,6 +11,7 @@ const app = {
     // Je suis dans l'objet app. this fait donc référence à cet objet.
     // /!\ si j'avais fait une fonction flêchée this. aurait fait référence au contexte parent : window
     this.affectEvent();
+    app.getListsFromAPI();
   },
 
   affectEvent() {
@@ -120,6 +123,26 @@ const app = {
 
     // 4. J'insère le duplicata dans le DOM
     document.querySelector(`div[list-id="${listId}"] .panel-block`).appendChild(newCardNode);
+  },
+
+  async getListsFromAPI() {
+    try {
+
+      // Pour faire une requête GET toutes simple, la fonction fetch s'utilise comme ceci
+      const response = await fetch(`${app.BASE_URL}/list`);
+
+      // La réponse récupéré a une méthode json() QUI RENVOI UNE PROMESSE
+      // A la résolution de cette promesse on obtient le corp de la requête
+      // si c'était du JSON (envoyé via response.json() d'express)
+      const listData = await response.json();
+
+      for (let list of listData.data) {
+        console.log(list);
+        //app.makeListInDOM
+      }
+    } catch (error) {
+      console.log('Error fetching lists :', error);
+    }
   }
 
 };
