@@ -96,23 +96,30 @@ const app = {
     app.closeAllModal();
   },
 
-  makeListInDOM(listName) {
+  makeListInDOM(listId, name) {
     // Pour utiliser les templates voici quelques étapes
     // 1. Je récupère mon noeud de template
     const template = document.getElementById('list-template');
 
     // 2. Je duplique mon noeud de template
     const newListNode = document.importNode(template.content, true);
+    // /!\ Content renvoi tt ce qui est entre les deux balise template
+    // PAS la première balise fille
+    // La différence c'est que je vais récupérer un "Fragment de Document"
+    // qui aura potentiellement des zone d'espace lié à mon indentation
+    // ou mes retours à la ligne.
+    // je dois donc faire un querySelector même pour la balise parente
 
     // 3. Je modifie le duplicata pour intégrer les données
-    newListNode.querySelector('h2').textContent = listName;
+    newListNode.querySelector('h2').textContent = name;
     newListNode.querySelector('.add-card-button').addEventListener('click', app.showAddCardModal);
+    newListNode.querySelector('[list-id]').setAttribute('list-id', listId);
 
     // 4. J'insère le duplicata dans le DOM
     document.querySelector('.card-lists').appendChild(newListNode);
   },
 
-  makeCardInDOM(cardName, listId) {
+  makeCardInDOM(cardId, cardName, backgroundColor, listId) {
     const template = document.getElementById('card-template');
 
     // 2. Je duplique mon noeud de template
@@ -120,6 +127,9 @@ const app = {
 
     // 3. Je modifie le duplicata pour intégrer les données
     newCardNode.querySelector('.card-content').textContent = cardName;
+    newCardNode.querySelector('[card-id]').setAttribute('card-id', cardId);
+    newCardNode.querySelector('.box').style.backgroundColor = backgroundColor;
+
 
     // 4. J'insère le duplicata dans le DOM
     document.querySelector(`div[list-id="${listId}"] .panel-block`).appendChild(newCardNode);
@@ -128,7 +138,7 @@ const app = {
   async getListsFromAPI() {
     try {
 
-      // Pour faire une requête GET toutes simple, la fonction fetch s'utilise comme ceci
+      // Pour faire une requête GET touteqs simple, la fonction fetch s'utilise comme ceci
       const response = await fetch(`${app.BASE_URL}/list`);
 
       // La réponse récupéré a une méthode json() QUI RENVOI UNE PROMESSE
@@ -136,9 +146,30 @@ const app = {
       // si c'était du JSON (envoyé via response.json() d'express)
       const listData = await response.json();
 
+      // listData correspond à ce qui est renvoyé par l'API
       for (let list of listData.data) {
-        console.log(list);
-        //app.makeListInDOM
+        app.makeListInDOM(list.id, list.name, list.cardsList);
+
+        // On pourrait aussi passer directement tt l'objet comme ceci
+        // et utiliser list.id et list.name dans le code de makeListInDOM
+        // app.makeListInDOM(list);
+
+        // Il  faut faire attention à l'ordre des chose.
+        // dans makeCardInDOM je vais faire un querySelector
+        // à la recherche de ma liste (pour ajouter ma carte dedans)
+        // pour que qeurySelector fonctionne il faut que ma liste est déjà été
+        // ajouter dans le DOM (appendChild)
+
+        for (let card of list.cardsList) {
+
+          // Imaginons que j'ai un doute sur le nom de la propriété .content
+          // (je sais pas si c'est .content, .name, .title)
+          // Je peux soit :
+          // - ouvrir Insomnia et regarder
+          // - ouvrir mon controller dans mon projet et regarder
+          // - faire un console.log de card et regarder ce qui est à l'intérieur
+          app.makeCardInDOM(card.id, card.content, card.color, list.id)
+        }
       }
     } catch (error) {
       console.log('Error fetching lists :', error);
