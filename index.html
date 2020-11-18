@@ -73,7 +73,7 @@
                         <div class="field">
                             <label class="label">Nom</label>
                             <div class="control">
-                                <input type="text" class="input" name="name" value="" placeholder="Nom de la carte">
+                                <input type="text" class="input" name="content" value="" placeholder="Nom de la carte">
                                 <input type="hidden" name="list_id">
                             </div>
                         </div>
@@ -94,16 +94,15 @@
                         <div class="column">
                             <h2 class="has-text-white">__NAME__</h2>
 
-                            <form action="" method="POST" class="is-hidden">
-                                <input type="hidden" name="list-id" value="1">
+                            <form action="" method="POST" class="is-hidden edit-list-form">
                                 <div class="field has-addons">
                                     <div class="control">
-                                        <input type="text" class="input is-small" name="list-name"
+                                        <input type="text" class="input is-small" name="name"
                                                value=""
                                                placeholder="Nom de la liste">
                                     </div>
                                     <div class="control">
-                                        <button class="button is-small is-success">Valider</button>
+                                        <button class="button is-small is-success edit-list-button">Valider</button>
                                     </div>
                                 </div>
                             </form>
@@ -144,6 +143,8 @@
             </div>
         </template>
         <!-- Chargement de mon fichier JS -->
+        <script src="./assets/js/cards.js"></script>
+        <script src="./assets/js/lists.js"></script>
         <script src="./assets/js/app.js"></script>
     </body>
 
