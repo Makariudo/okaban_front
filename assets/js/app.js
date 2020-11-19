@@ -14,21 +14,21 @@ const app = {
   },
 
   affectEvent() {
-    document.getElementById('addListButton').addEventListener('click', app.showAddListModal);
+    document.getElementById('addListButton').addEventListener('click', listsModule.showAddListModal);
 
     const closeButtons = document.querySelectorAll('.close');
     for (let button of closeButtons) {
       button.addEventListener('click', app.closeAllModal);
     }
 
-    document.querySelector('#addListModal form').addEventListener('submit', app.submitListCreation);
+    document.querySelector('#addListModal form').addEventListener('submit', listsModule.submitListCreation);
 
     const addCardButtons = document.querySelectorAll('.add-card-button');
     for (let button of addCardButtons) {
-      button.addEventListener('click', app.showAddCardModal);
+      button.addEventListener('click', cardsModule.showAddCardModal);
     }
 
-    document.querySelector('#addCardModal form').addEventListener('submit', app.submitCardCreation);
+    document.querySelector('#addCardModal form').addEventListener('submit', cardsModule.submitCardCreation);
 
   },
 

@@ -42,6 +42,7 @@ const listsModule = {
         // Extraire du formulaire les données intéréssante
         // Comme c'est mon <form> qui a  émis l'event je peux retrouver ma balise dans event.target
         const formData = new FormData(event.target);
+        console.log("submit list", event.target)
 
         // Les objets formData on un méthode get qui permet de récupérer la valeur
         // d'un des champs du formulaire en donnant le "name" de ce champ
