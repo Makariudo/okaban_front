@@ -96,10 +96,17 @@ const cardsModule = {
         //ecoute sur le submit de modif
         newCardNode.querySelector('.edit-card-form').addEventListener('submit', cardsModule.submitCardEdit);
 
+        //ecoute sur le plus
+        let plus = newCardNode.querySelector('.add-card-button');
+        plus.addEventListener('click', tagsModule.showAddTagModal);
+
 
         // 3. Je modifie le duplicata pour intégrer les données
+        //si tags je les affichent
         if (tagsList.length >= 1){
-            newCardNode.querySelector('.tags').textContent = tagsList[0].name;
+            for (let tag of tagsList){
+                newCardNode.querySelector('.tags').textContent = tag.name;
+            }
         } else {
             newCardNode.querySelector('.tags').classList.add('is-hidden');
         }
@@ -109,12 +116,30 @@ const cardsModule = {
         newCardNode.querySelector('.fa-trash-alt').addEventListener('click', cardsModule.deleteCard);
         newCardNode.querySelector('.fa-pencil-alt').addEventListener('click', cardsModule.editCard);
 
-        
-
 
         // 4. J'insère le duplicata dans le DOM
         document.querySelector(`div[list-id="${listId}"] .panel-block`).appendChild(newCardNode);
+        cardsModule.addSortable(cardId);
     },
+
+    addSortable(cardId) {
+        const cardNode = document.querySelector(`[card-id="${cardId}"]`);
+        new Sortable(cardNode/* .parentNode */,{
+            animation: 150,
+            ghostClass:'sortable-ghost',
+            group: 'shared-list',
+            dataIdAttr: cardId,
+            onEnd: (event)=>{
+                console.log("fin de drag:",event)
+                var item1 = event.item
+                console.log("item 1", item1);
+                console.log("from",event.from);
+                console.log('to:', event.to);
+
+            }});
+
+        },
+    
 
     async sendCreateCardToAPI(cardFormData) {
 

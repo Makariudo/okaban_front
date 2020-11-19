@@ -104,7 +104,6 @@ const listsModule = {
 
         let trash = newListNode.querySelector('.fa-trash-alt');
         let trashSpan = trash.parentNode;
-
         trashSpan.addEventListener('click', listsModule.deleteList);
 
 
@@ -113,9 +112,23 @@ const listsModule = {
         newListNode.querySelector('.edit-list-form').addEventListener('submit', listsModule.submitListEdit);
         newListNode.querySelector('[list-id]').setAttribute('list-id', listId);
 
+        
+
         // 4. J'insère le duplicata dans le DOM
+
         document.querySelector('.card-lists').appendChild(newListNode);
+        listsModule.addSortable(listId);
     },
+
+        addSortable(listId) {
+            console.log("addsortable à faire")
+            const listNode = document.querySelector(`[list-id="${listId}"]`);
+            new Sortable(listNode,{
+                animation: 150,
+                ghostClass:'sortable-ghost',
+                group: 'shared-list'
+            })
+        },
 
     async getListsFromAPI() {
         try {

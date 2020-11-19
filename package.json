@@ -1,0 +1,25 @@
+{
+  "name": "okanban-front-red-maximeraynal",
+  "version": "1.0.0",
+  "description": "On continue de coder les fonctionalités de notre application !",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Makariudo/okaban_front.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Makariudo/okaban_front/issues"
+  },
+  "homepage": "https://github.com/Makariudo/okaban_front#readme",
+  "dependencies": {
+    "sortablejs": "^1.12.0"
+  }
+}

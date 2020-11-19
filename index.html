@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
         <link rel="stylesheet" href="./assets/css/style.css">
         <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     </head>
 
     <body>
@@ -30,6 +31,15 @@
                                 <i class="fas fa-plus"></i>
                             </span>
                             &nbsp; Ajouter une liste
+                        </button>
+                    </div>
+
+                    <div class="column">
+                        <button class="button is-warning " id="addTagButton">
+                            <span class="icon is-small">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                            &nbsp; Ajouter un tag
                         </button>
                     </div>
 
@@ -86,6 +96,32 @@
             </div>
         </div>
 
+
+        <div class="modal" id="addTagModal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <form action="" method="POST">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title">Ajoute un tag</p>
+                        <button class="delete close" type="button" aria-label="close"></button>
+                    </header>
+                    <section class="modal-card-body">
+                        <div class="field">
+                            <label class="label">Nom</label>
+                            <div class="control">
+                                <input type="text" class="input" name="name" value="" placeholder="Nom du tag">
+                                <input type="hidden" name="card_id">
+                            </div>
+                        </div>
+                    </section>
+                    <footer class="modal-card-foot">
+                        <button class="button is-success">Save changes</button>
+                        <button class="button close" type="button">Cancel</button>
+                    </footer>
+                </form>
+            </div>
+        </div>
+
         <template id="list-template">
             <div class="column is-one-quarter panel" list-id="__ID__">
                 <div class="panel-heading has-background-info">
@@ -125,11 +161,13 @@
                     </div>
                 </div>
                 <div class="panel-block is-block has-background-light">
+
+                    
                 </div>
             </div>
         </template>
         <template id="card-template">
-            <div class="box" card-id="__ID__">
+            <div class="box item" card-id="__ID__">
                 <div class="columns">
                     <div class="tags">__TAGS__</div>
                     <div class="column card-content">
@@ -161,12 +199,19 @@
                             <i class="fas fa-trash-alt"></i>
                             </span>
                         </a>
+                        <a href="#" class="is-pulled-right">
+                            <span class="icon is-small has-text-black add-card-button">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                        </a>
                     </div>
                 </div>
             </div>
         </template>
         <!-- Chargement de mon fichier JS -->
         <script src="./assets/js/cards.js"></script>
+        <script src="./assets/js/tags.js"></script>
+
         <script src="./assets/js/lists.js"></script>
         <script src="./assets/js/app.js"></script>
     </body>

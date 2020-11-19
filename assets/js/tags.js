@@ -1,39 +1,66 @@
 const tagsModule = {
     
+    showAddTagModal(event) {
+        const modalNode =  document.getElementById('addTagModal');
+        modalNode.classList.add('is-active');
+        const addButton = event.target;
+        const cardNode = addButton.closest('div[card-id]');
+        const cardId = cardNode.getAttribute('card-id');
+        modalNode.querySelector('input[type="hidden"]').value = cardId;
+        },
 
-    makeCardInDOM(cardId, cardName, backgroundColor, listId) {
-        const template = document.getElementById('card-template');
+        submitTagCreation(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
 
-        // 2. Je duplique mon noeud de template
-        const newCardNode = document.importNode(template.content, true);
-       
-        //ecoute sur la poubelle de card
-        let trash = newCardNode.querySelector('.fa-trash-alt');
-        let trashSpan = trash.parentNode;
-        trashSpan.addEventListener('click', cardsModule.deleteCard);
+            let cardId = event.target.querySelector('input[type="hidden"]').value;
+            console.log('recup cardId du submit', cardId);
+
+            tagsModule.sendCreateTagToAPI(formData, cardId);
+            app.closeAllModal();
+        },
+
+        async sendCreateTagToAPI(tagFormData, cardId) {
+
+            try {
+                // fetch peut aussi faire des requêtes POST
+                // fetch attend un second paramètre qui va concerner toutes les options
+                // de la requêtes (methode, body, headers)
     
-        //ecoute sur le pencil
-        let pencil = newCardNode.querySelector('.fa-pencil-alt');
-        let pencilSpan = pencil.parentNode;
-        pencilSpan.addEventListener('click', cardsModule.showEditCard);
+                const response = await fetch(`${app.BASE_URL}/tag`, {
+                    method: 'POST',
+                    // On peut envoyer directement un formData via fetch
+                    // (express pourra le lire avec les bon middleware)
+                    body: tagFormData
+                });
+    
+                // Je vérifie le code retour de mon API pour être sur que
+                // mon objet est bien créé
+                if (response.status == 201) {
+                    const newTagData = await response.json();
+                    const newTag = newTagData.data;
+                    const tagId = newTag.id
+                    console.log("retour creation:", newTag)
+                    //on associe à la card
+                     const reponseAssociation = await fetch(`${app.BASE_URL}/${cardId}/tag/${tagId}`, {
+                         method: 'PATCH'
+                     });
+                     if (reponseAssociation.status == 201) {
+                        //recup la card pour afficher son tag
+                        console.log('reponseOK!')
+                        /* const cardNode = document.querySelector(`[card-id="${cardId}"]`);
+                        let divTag = cardNode.querySelector('.tags');
+                        divTag.classList.remove('is-hidden'); */
+                        listsModule.getListsFromAPI();
 
-        //ecoute sur le submit de modif
-        newCardNode.querySelector('.edit-card-form').addEventListener('submit', cardsModule.submitCardEdit);
+                     }
+ 
 
-
-        // 3. Je modifie le duplicata pour intégrer les données
-        newCardNode.querySelector('.card-content').textContent = cardName;
-        newCardNode.querySelector('[card-id]').setAttribute('card-id', cardId);
-        newCardNode.querySelector('.box').style.backgroundColor = backgroundColor;
-        newCardNode.querySelector('.fa-trash-alt').addEventListener('click', cardsModule.deleteCard);
-        newCardNode.querySelector('.fa-pencil-alt').addEventListener('click', cardsModule.editCard);
-
-        
-
-
-        // 4. J'insère le duplicata dans le DOM
-        document.querySelector(`div[list-id="${listId}"] .panel-block`).appendChild(newCardNode);
-    },
-
-
+                } else {
+                    console.log('attendu 201, reçu :', response.status);
+                }
+            } catch (error) {
+                console.log('error sending create card', error);
+            }
+        }
 };

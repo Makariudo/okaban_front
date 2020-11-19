@@ -1,5 +1,9 @@
+
+
+
 // on objet qui contient des fonctions
 const app = {
+ 
 
   BASE_URL: 'http://localhost:3000',
 
@@ -29,7 +33,7 @@ const app = {
     }
 
     document.querySelector('#addCardModal form').addEventListener('submit', cardsModule.submitCardCreation);
-
+    document.querySelector('#addTagModal form').addEventListener('submit', tagsModule.submitTagCreation);
   },
 
   closeAllModal() {
@@ -39,6 +43,17 @@ const app = {
       modal.classList.remove('is-active');
     }
   },
+  essaisortable(){
+    console.log('mise en place du sortable');
+    //essai sortable
+    //recup des lists
+    /* let liste1 = document.querySelectorAll('.column');
+    console.log(liste1); */
+    /* new Sortable(newListNode,{
+      animation: 150,
+      ghostClass:'sortable-ghost'
+  })  */
+  }
 };
 
 
@@ -49,6 +64,14 @@ const app = {
 // cette fonction donne au callback qu'elle appelle un this dépendant de l'évenement.
 // Si je veux bloquer la redéfinition de this je dois appeler app.init depuis une fonction
 // fléché
-document.addEventListener('DOMContentLoaded', _ => {
-  app.init();
+document.addEventListener('DOMContentLoaded',  async() => {
+  try {
+    await app.init();
+    await app.essaisortable();
+
+  } catch(erreur){
+    console.log(erreur);
+  }
+
+  
 });
