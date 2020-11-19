@@ -14,11 +14,17 @@ const cardsModule = {
         // Je peux donc récupérer la valeur et la mettre dans le input hidden
         const listId = listNode.getAttribute('list-id');
         modalNode.querySelector('input[type="hidden"]').value = listId;
+
     },
     
 
     deleteCard(event) {
-        console.log("trash", event.target);
+        const trash = event.target;
+        const cardNode = trash.closest('div[card-id]');
+        const cardId = cardNode.getAttribute('card-id');
+        console.log(cardId)
+        cardsModule.deleteCardToAPI(cardId); 
+
     },
 
     submitCardEdit(event) {
@@ -49,7 +55,7 @@ const cardsModule = {
         const formNode = cardNode.querySelector('.edit-card-form');
         console.log(formNode);
 
-        const titleNode = event.target;
+        const titleNode = cardNode.querySelector('.card-content');
         console.log("titleNode :", titleNode);
 
         const actualName = titleNode.textContent;
@@ -95,7 +101,6 @@ const cardsModule = {
         newCardNode.querySelector('.card-content').textContent = cardName;
         newCardNode.querySelector('[card-id]').setAttribute('card-id', cardId);
         newCardNode.querySelector('.box').style.backgroundColor = backgroundColor;
-        
         newCardNode.querySelector('.fa-trash-alt').addEventListener('click', cardsModule.deleteCard);
         newCardNode.querySelector('.fa-pencil-alt').addEventListener('click', cardsModule.editCard);
 
@@ -175,7 +180,33 @@ const cardsModule = {
                 console.log('attendu 200, reçu :', response.status);
             }
         } catch (error) {
-            console.log('error sending create list', error);
+            console.log('error sending edit card', error);
         }
     },
+    async deleteCardToAPI(cardId) {
+        try {
+            // fetch peut aussi faire des requêtes POST
+            // fetch attend un second paramètre qui va concerner toutes les options
+            // de la requêtes (methode, body, headers)
+
+            const response = await fetch(`${app.BASE_URL}/card/${cardId}`, {
+                method: 'DELETE'
+            });
+
+            // Je vérifie le code retour de mon API pour être sur que
+            // mon objet est bien créé
+            if (response.status == 200) {
+                const cardNode = document.querySelector(`[card-id="${cardId}"]`);
+                console.log('cardNode', cardNode)
+                // Je delete le node du DOm
+                cardNode.remove();
+
+            } else {
+                console.log('attendu 200, reçu :', response.status);
+            }
+        } catch (error) {
+            console.log('error sending delete card', error);
+        }
+    }
+
 };
