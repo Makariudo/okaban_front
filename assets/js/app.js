@@ -43,17 +43,7 @@ const app = {
       modal.classList.remove('is-active');
     }
   },
-  essaisortable(){
-    console.log('mise en place du sortable');
-    //essai sortable
-    //recup des lists
-    /* let liste1 = document.querySelectorAll('.column');
-    console.log(liste1); */
-    /* new Sortable(newListNode,{
-      animation: 150,
-      ghostClass:'sortable-ghost'
-  })  */
-  }
+  
 };
 
 
@@ -67,7 +57,6 @@ const app = {
 document.addEventListener('DOMContentLoaded',  async() => {
   try {
     await app.init();
-    await app.essaisortable();
 
   } catch(erreur){
     console.log(erreur);

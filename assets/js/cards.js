@@ -125,25 +125,77 @@ const cardsModule = {
 
     addSortable(cardId) {
         const cardNode = document.querySelector(`[card-id="${cardId}"]`);
+        const containerCard = cardNode.parentNode.children;
+        const arrayPositionInit = [];
+        for (let card of containerCard){
+            arrayPositionInit.push(card.getAttribute('position'))
+        } 
+        console.log('arrayinit: ',arrayPositionInit);
+
+        //TO DO RECUP ODRE AVANT CHANGEMENT
         new Sortable(cardNode.parentNode,{
             animation: 150,
             ghostClass:'sortable-ghost',
             group: 'shared-list',
             dataIdAttr: cardId,
-            onEnd: cardsModule.updtatePosition
+            onEnd: (event, arrayPositionInit) => {
+                cardsModule.updtatePosition(event, arrayPositionInit);
+            }
         })
 
         },
 
-    updtatePosition(event){
+    updtatePosition(event, arrayInit){
         console.log("fin de drag:",event)
-        var item1 = event.item;
-        console.log("item 1", item1);
-        console.log("from",event.from);
-        console.log('to:', event.to);
+        let nodeCard = event.target.children;
+        //je consulte l'odre de la liste, je regarede s'il y a un changement
+        console.log('nodeCard:', nodeCard);
+        //je me cfrée deux tableaux dans l'orde d'apparition du Dom avec idcard et positioncard
+        let arrayEndPosition = [];
+        let arrayEndId = [];
+        for (let card of nodeCard){
+            arrayEndPosition.push(card.getAttribute('position'))
+        }
+        for (let card of nodeCard){
+            arrayEndId.push(card.getAttribute('card-id'))
+        }
+        console.log('array End Position:', arrayEndPosition);
+        console.log('array End Id:', arrayEndId);
+
+        //on remet dans l'ordre
+        let arrayEndPositionSort = arrayEndPosition.sort();
+
+        for (let i=0; i< arrayEndId.length; i++){
+            cardsModule.updatePositionAPI(arrayEndPositionSort[i], arrayEndId[i])
+        }
 
     },
     
+    async updatePositionAPI(iposition, cardid){
+        console.log('position :', iposition, "cardid:", cardid);
+        let position = {
+            position : iposition
+        }
+        try {
+            const response = await fetch(`${app.BASE_URL}/card/${cardid}`, {
+                method: 'PATCH',
+                body: JSON.stringify(position),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+
+            })
+            
+        console.log(response)
+           
+        } catch (error) {
+            console.log('error sending create card', error);
+        }
+        },
+    
+
+
+
 
     async sendCreateCardToAPI(cardFormData) {
 
