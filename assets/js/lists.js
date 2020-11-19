@@ -154,8 +154,13 @@ const listsModule = {
                 // à la recherche de ma liste (pour ajouter ma carte dedans)
                 // pour que qeurySelector fonctionne il faut que ma liste est déjà été
                 // ajouter dans le DOM (appendChild)
+                
+                //je mets en sort la liste de cards
+                let cardsSort = list.cardsList.sort((a,b) => {
+                    return a.position - b.position
+                })
 
-                for (let card of list.cardsList) {
+                for (let card of cardsSort) {
 
                     // Imaginons que j'ai un doute sur le nom de la propriété .content
                     // (je sais pas si c'est .content, .name, .title)
@@ -163,7 +168,7 @@ const listsModule = {
                     // - ouvrir Insomnia et regarder
                     // - ouvrir mon controller dans mon projet et regarder
                     // - faire un console.log de card et regarder ce qui est à l'intérieur
-                    cardsModule.makeCardInDOM(card.id, card.content, card.color, list.id, card.tagsList);
+                    cardsModule.makeCardInDOM(card.id, card.content, card.color, list.id, card.tagsList, card.position);
                 }
             }
         } catch (error) {

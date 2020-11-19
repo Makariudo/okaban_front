@@ -77,7 +77,7 @@ const cardsModule = {
 
    
 
-    makeCardInDOM(cardId, cardName, backgroundColor, listId, tagsList) {
+    makeCardInDOM(cardId, cardName, backgroundColor, listId, tagsList, position) {
         const template = document.getElementById('card-template');
 
         // 2. Je duplique mon noeud de template
@@ -112,6 +112,7 @@ const cardsModule = {
         }
         newCardNode.querySelector('.card-content').textContent = cardName;
         newCardNode.querySelector('[card-id]').setAttribute('card-id', cardId);
+        newCardNode.querySelector('[card-id]').setAttribute('position', position)
         newCardNode.querySelector('.box').style.backgroundColor = backgroundColor;
         newCardNode.querySelector('.fa-trash-alt').addEventListener('click', cardsModule.deleteCard);
         newCardNode.querySelector('.fa-pencil-alt').addEventListener('click', cardsModule.editCard);
@@ -124,21 +125,24 @@ const cardsModule = {
 
     addSortable(cardId) {
         const cardNode = document.querySelector(`[card-id="${cardId}"]`);
-        new Sortable(cardNode/* .parentNode */,{
+        new Sortable(cardNode.parentNode,{
             animation: 150,
             ghostClass:'sortable-ghost',
             group: 'shared-list',
             dataIdAttr: cardId,
-            onEnd: (event)=>{
-                console.log("fin de drag:",event)
-                var item1 = event.item
-                console.log("item 1", item1);
-                console.log("from",event.from);
-                console.log('to:', event.to);
-
-            }});
+            onEnd: cardsModule.updtatePosition
+        })
 
         },
+
+    updtatePosition(event){
+        console.log("fin de drag:",event)
+        var item1 = event.item;
+        console.log("item 1", item1);
+        console.log("from",event.from);
+        console.log('to:', event.to);
+
+    },
     
 
     async sendCreateCardToAPI(cardFormData) {
