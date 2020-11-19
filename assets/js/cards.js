@@ -77,7 +77,7 @@ const cardsModule = {
 
    
 
-    makeCardInDOM(cardId, cardName, backgroundColor, listId) {
+    makeCardInDOM(cardId, cardName, backgroundColor, listId, tagsList) {
         const template = document.getElementById('card-template');
 
         // 2. Je duplique mon noeud de template
@@ -98,6 +98,11 @@ const cardsModule = {
 
 
         // 3. Je modifie le duplicata pour intégrer les données
+        if (tagsList.length >= 1){
+            newCardNode.querySelector('.tags').textContent = tagsList[0].name;
+        } else {
+            newCardNode.querySelector('.tags').classList.add('is-hidden');
+        }
         newCardNode.querySelector('.card-content').textContent = cardName;
         newCardNode.querySelector('[card-id]').setAttribute('card-id', cardId);
         newCardNode.querySelector('.box').style.backgroundColor = backgroundColor;

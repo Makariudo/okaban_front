@@ -150,7 +150,7 @@ const listsModule = {
                     // - ouvrir Insomnia et regarder
                     // - ouvrir mon controller dans mon projet et regarder
                     // - faire un console.log de card et regarder ce qui est à l'intérieur
-                    cardsModule.makeCardInDOM(card.id, card.content, card.color, list.id)
+                    cardsModule.makeCardInDOM(card.id, card.content, card.color, list.id, card.tagsList);
                 }
             }
         } catch (error) {
