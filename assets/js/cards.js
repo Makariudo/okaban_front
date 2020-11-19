@@ -15,6 +15,49 @@ const cardsModule = {
         const listId = listNode.getAttribute('list-id');
         modalNode.querySelector('input[type="hidden"]').value = listId;
     },
+    
+
+    deleteCard(event) {
+        console.log("trash", event.target);
+    },
+
+    submitCardEdit(event) {
+        event.preventDefault();
+
+        console.log("coucou de submit card edit");
+        // J'intercepte la soumission du formulaire
+        // Je veux
+        // Bloquer le rechargement de la page
+
+        // Extraire du formulaire les données intéréssante
+        // Comme c'est mon <form> qui a  émis l'event je peux retrouver ma balise dans event.target
+        const formData = new FormData(event.target);
+
+
+        const cardNode = event.target.closest('[card-id]');
+        const cardId = cardNode.getAttribute('card-id');
+
+
+        cardsModule.sendEditCardToAPI(formData, cardId); 
+    },
+ 
+
+    showEditCard(event) {
+
+        const cardNode = event.target.closest('[card-id]');
+
+        const formNode = cardNode.querySelector('.edit-card-form');
+        console.log(formNode);
+
+        const titleNode = event.target;
+        console.log("titleNode :", titleNode);
+
+        const actualName = titleNode.textContent;
+        formNode.querySelector('input[name="content"]').value = actualName;
+
+        formNode.classList.remove('is-hidden');
+        titleNode.classList.add('is-hidden');
+    },
 
     submitCardCreation(event) {
         event.preventDefault();
@@ -26,26 +69,37 @@ const cardsModule = {
         app.closeAllModal();
     },
 
-    submitCardEdit(event) {
-        event.preventDefault();
-
-        const formData = new FormData(event.target);
-
-        cardsModule.sendCreateCardToAPI(formData);
-
-        app.closeAllModal();
-    },
+   
 
     makeCardInDOM(cardId, cardName, backgroundColor, listId) {
         const template = document.getElementById('card-template');
 
         // 2. Je duplique mon noeud de template
         const newCardNode = document.importNode(template.content, true);
+       
+        //ecoute sur la poubelle de card
+        let trash = newCardNode.querySelector('.fa-trash-alt');
+        let trashSpan = trash.parentNode;
+        trashSpan.addEventListener('click', cardsModule.deleteCard);
+    
+        //ecoute sur le pencil
+        let pencil = newCardNode.querySelector('.fa-pencil-alt');
+        let pencilSpan = pencil.parentNode;
+        pencilSpan.addEventListener('click', cardsModule.showEditCard);
+
+        //ecoute sur le submit de modif
+        newCardNode.querySelector('.edit-card-form').addEventListener('submit', cardsModule.submitCardEdit);
+
 
         // 3. Je modifie le duplicata pour intégrer les données
         newCardNode.querySelector('.card-content').textContent = cardName;
         newCardNode.querySelector('[card-id]').setAttribute('card-id', cardId);
         newCardNode.querySelector('.box').style.backgroundColor = backgroundColor;
+        
+        newCardNode.querySelector('.fa-trash-alt').addEventListener('click', cardsModule.deleteCard);
+        newCardNode.querySelector('.fa-pencil-alt').addEventListener('click', cardsModule.editCard);
+
+        
 
 
         // 4. J'insère le duplicata dans le DOM
@@ -78,5 +132,50 @@ const cardsModule = {
         } catch (error) {
             console.log('error sending create card', error);
         }
-    }
+    },
+    async sendEditCardToAPI(cardFormData, cardId) {
+
+        try {
+            // fetch peut aussi faire des requêtes POST
+            // fetch attend un second paramètre qui va concerner toutes les options
+            // de la requêtes (methode, body, headers)
+
+            const response = await fetch(`${app.BASE_URL}/card/${cardId}`, {
+                method: 'PATCH',
+                // On peut envoyer directement un formData via fetch
+                // (express pourra le lire avec les bon middleware)
+                body: cardFormData
+            });
+
+            // Je vérifie le code retour de mon API pour être sur que
+            // mon objet est bien créé
+            if (response.status == 200) {
+                // Une fois ici je sais que ma requête à bien été validé.
+
+                // Je dois donc metttre à jour le DOM
+                // Changer le titre, cacher le form,...
+                const cardData = await response.json();
+                const card = cardData.data;
+
+                // Je récupère la nouvelle info
+                const newContent = card.content;
+
+                const cardNode = document.querySelector(`[card-id="${cardId}"]`);
+                console.log('cardNode', cardNode)
+                // Je cache le formulaire
+                cardNode.querySelector('.edit-card-form').classList.add('is-hidden');
+                // J'affiche le titre
+                cardNode.querySelector('.card-content').classList.remove('is-hidden');
+                // Je met à jour le titre
+                cardNode.querySelector('.card-content').textContent = newContent;
+                cardNode.style.backgroundColor = card.color;
+
+
+            } else {
+                console.log('attendu 200, reçu :', response.status);
+            }
+        } catch (error) {
+            console.log('error sending create list', error);
+        }
+    },
 };
