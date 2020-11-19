@@ -4,6 +4,16 @@ const listsModule = {
         const modalNode = document.getElementById('addListModal');
         modalNode.classList.add('is-active');
     },
+    
+    deleteList(event) {
+        console.log("coucou de delete list");
+        const trash = event.target;
+        const listNode = trash.closest('div[list-id]');
+        const listId = listNode.getAttribute('list-id');
+        console.log(listId);
+        listsModule.deleteListToAPI(listId); 
+
+    },
 
     showEditFormList(event) {
 
@@ -91,6 +101,13 @@ const listsModule = {
         newListNode.querySelector('h2').addEventListener('dblclick', listsModule.showEditFormList);
 
         newListNode.querySelector('.add-card-button').addEventListener('click', cardsModule.showAddCardModal);
+
+        let trash = newListNode.querySelector('.fa-trash-alt');
+        let trashSpan = trash.parentNode;
+
+        trashSpan.addEventListener('click', listsModule.deleteList);
+
+
 
         // Pour gérer l'edition on attache un écouter sur la SOUMISSION du formulaire
         newListNode.querySelector('.edit-list-form').addEventListener('submit', listsModule.submitListEdit);
@@ -212,4 +229,29 @@ const listsModule = {
             console.log('error sending create list', error);
         }
     },
+    async deleteListToAPI(listId) {
+        try {
+            // fetch peut aussi faire des requêtes POST
+            // fetch attend un second paramètre qui va concerner toutes les options
+            // de la requêtes (methode, body, headers)
+
+            const response = await fetch(`${app.BASE_URL}/list/${listId}`, {
+                method: 'DELETE'
+            });
+
+            // Je vérifie le code retour de mon API pour être sur que
+            // mon objet est bien créé
+            if (response.status == 200) {
+                const listNode = document.querySelector(`[list-id="${listId}"]`);
+                console.log('listNode', listNode)
+                // Je delete le node du DOm
+                listNode.remove();
+
+            } else {
+                console.log('attendu 200, reçu :', response.status);
+            }
+        } catch (error) {
+            console.log('error sending delete card', error);
+        }
+    }
 };
